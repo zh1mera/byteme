@@ -1,0 +1,82 @@
+[17-May-2025 20:02:06 Europe/Berlin] POST data received: Array
+(
+    [level] => 1
+    [code] => 4
+)
+
+[17-May-2025 20:02:06 Europe/Berlin] Processing submission for level 1
+[17-May-2025 20:02:06 Europe/Berlin] Getting answer for level: 1
+[17-May-2025 20:02:06 Europe/Berlin] Using puzzle file: ../../../../puzzles/beginner/python.txt
+[17-May-2025 20:02:06 Europe/Berlin] User answer: '4'
+[17-May-2025 20:02:06 Europe/Berlin] Correct answer: '5'
+[17-May-2025 20:02:10 Europe/Berlin] POST data received: Array
+(
+    [level] => 1
+    [code] => 5
+)
+
+[17-May-2025 20:02:10 Europe/Berlin] Processing submission for level 1
+[17-May-2025 20:02:10 Europe/Berlin] Getting answer for level: 1
+[17-May-2025 20:02:10 Europe/Berlin] Using puzzle file: ../../../../puzzles/beginner/python.txt
+[17-May-2025 20:02:10 Europe/Berlin] User answer: '5'
+[17-May-2025 20:02:10 Europe/Berlin] Correct answer: '5'
+[18-May-2025 17:29:19 Europe/Berlin] POST data received: Array
+(
+    [level] => 1
+    [code] => 9
+
+)
+
+[18-May-2025 17:29:19 Europe/Berlin] Processing submission for level 1
+[18-May-2025 17:29:19 Europe/Berlin] Getting answer for level: 1
+[18-May-2025 17:29:19 Europe/Berlin] Using puzzle file: ../../../../puzzles/beginner/python.txt
+[18-May-2025 17:29:19 Europe/Berlin] User answer: '9'
+[18-May-2025 17:29:19 Europe/Berlin] Correct answer: '5'
+[18-May-2025 17:29:26 Europe/Berlin] POST data received: Array
+(
+    [level] => 1
+    [code] => 9
+
+)
+
+[18-May-2025 17:29:26 Europe/Berlin] Processing submission for level 1
+[18-May-2025 17:29:26 Europe/Berlin] Getting answer for level: 1
+[18-May-2025 17:29:26 Europe/Berlin] Using puzzle file: ../../../../puzzles/beginner/python.txt
+[18-May-2025 17:29:26 Europe/Berlin] User answer: '9'
+[18-May-2025 17:29:26 Europe/Berlin] Correct answer: '5'
+[18-May-2025 17:29:27 Europe/Berlin] POST data received: Array
+(
+    [level] => 1
+    [code] => 9
+
+)
+
+[18-May-2025 17:29:27 Europe/Berlin] Processing submission for level 1
+[18-May-2025 17:29:27 Europe/Berlin] Getting answer for level: 1
+[18-May-2025 17:29:27 Europe/Berlin] Using puzzle file: ../../../../puzzles/beginner/python.txt
+[18-May-2025 17:29:27 Europe/Berlin] User answer: '9'
+[18-May-2025 17:29:27 Europe/Berlin] Correct answer: '5'
+[18-May-2025 17:29:35 Europe/Berlin] POST data received: Array
+(
+    [level] => 1
+    [code] => 0
+
+)
+
+[18-May-2025 17:29:35 Europe/Berlin] Processing submission for level 1
+[18-May-2025 17:29:35 Europe/Berlin] Getting answer for level: 1
+[18-May-2025 17:29:35 Europe/Berlin] Using puzzle file: ../../../../puzzles/beginner/python.txt
+[18-May-2025 17:29:35 Europe/Berlin] User answer: '0'
+[18-May-2025 17:29:35 Europe/Berlin] Correct answer: '5'
+[18-May-2025 17:29:42 Europe/Berlin] POST data received: Array
+(
+    [level] => 1
+    [code] => 5
+
+)
+
+[18-May-2025 17:29:42 Europe/Berlin] Processing submission for level 1
+[18-May-2025 17:29:42 Europe/Berlin] Getting answer for level: 1
+[18-May-2025 17:29:42 Europe/Berlin] Using puzzle file: ../../../../puzzles/beginner/python.txt
+[18-May-2025 17:29:42 Europe/Berlin] User answer: '5'
+[18-May-2025 17:29:42 Europe/Berlin] Correct answer: '5'
