@@ -22,16 +22,14 @@ BYTEme is a programming learning app that helps students understand coding funda
 1. Clone or download the project:
    ```bash
    git clone https://github.com/yourusername/byteme.git
-Set up a local server (e.g., XAMPP or MAMP).
+2. Set up a local server (e.g., XAMPP or MAMP).
 
-Place the project folder inside the htdocs directory.
+3. Place the project folder inside the htdocs directory.
 
-Import the provided MySQL database into phpMyAdmin.
+4. Import the provided MySQL database into phpMyAdmin.
 
-Start Apache and MySQL.
+5. Start Apache and MySQL.
 
-Access the app in your browser:
-
-```arduino
-
-http://localhost/byteme
+6. Access the app in your browser:
+   ```arduino
+   http://localhost/byteme
