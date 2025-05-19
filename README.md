@@ -32,6 +32,6 @@ Start Apache and MySQL.
 
 Access the app in your browser:
 
-arduino
+```arduino
 
 http://localhost/byteme
