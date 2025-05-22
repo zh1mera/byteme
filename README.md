@@ -1,6 +1,6 @@
 # BYTEme
 
-BYTEme is a programming learning app that helps students understand coding fundamentals through level-based quizzes and interactive challenges.
+BYTEme is an educational programming app designed to help students grasp the fundamentals of coding in a structured and engaging way. Through level-based quizzes and interactive challenges, BYTEme guides learners from basic concepts to more advanced topics in Python, Java, and JavaScript. Whether you're just starting out or looking to reinforce your understanding, BYTEme provides a step-by-step path to build confidence and competence in programming. With support for both web and desktop platforms, it's a flexible tool for learning anywhere, anytime.
 
 ## Features
 
@@ -48,5 +48,6 @@ BYTEme is a programming learning app that helps students understand coding funda
 3. Run the desktop app:
    ``bash
    npx electron .
-   
+
+
 ## Make sure your PHP server is running if your Electron app depends on backend interaction.
