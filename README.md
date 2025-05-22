@@ -32,4 +32,4 @@ BYTEme is a programming learning app that helps students understand coding funda
 
 6. Access the app in your browser:
    ```arduino
-   http://localhost/byteme
+   http://localhost/byteme/welcom.php
