@@ -1,108 +1,40 @@
-1.What will print([i for i in range(3)]) output?
+Level 1:
+Q: What will print([i for i in range(3)]) output?
+A: [0, 1, 2]
 
-A) (0, 1, 2)
+Level 2:
+Q: What does *args do in a Python function?
+A: Accepts multiple positional arguments
 
-B) [0, 1, 2] ✅
+Level 3:
+Q: Which of these is immutable?
+A: tuple
 
-C) 012
+Level 4:
+Q: What is the output of bool([])?
+A: False
 
-D) i, i, i
+Level 5:
+Q: How do you handle exceptions?
+A: try-except
 
+Level 6:
+Q: Which module helps serialize objects?
+A: json
 
-2.What does *args do in a Python function?
+Level 7:
+Q: What does zip([1,2], ['a','b']) return?
+A: [(1, 'a'), (2, 'b')]
 
-A) Skips arguments
+Level 8:
+Q: List comprehension [x*x for x in range(3)] results in:
+A: [0, 1, 4]
 
-B) Makes a list of optional keyword arguments
+Level 9:
+Q: Which statement is correct?
+A: lambda creates anonymous functions
 
-C) Accepts multiple positional arguments ✅
+Level 10:
+Q: How is a class defined?
+A: class MyClass
 
-D) Accepts default parameters
-
-
-3.Which of these is immutable?
-
-A) list
-
-B) dict
-
-C) set
-
-D) tuple ✅
-
-
-4.What is the output of bool([])?
-
-A) True
-
-B) False ✅
-
-C) Error
-
-D) None
-
-
-5.How do you handle exceptions?
-
-A) try-catch
-
-B) try-except ✅
-
-C) on-error
-
-D) try-throw
-
-
-6.Which module helps serialize objects?
-
-A) marshal
-
-B) json ✅
-
-C) os
-
-D) subprocess
-
-
-7.What does zip([1,2], ['a','b']) return?
-
-A) [(1, 'a'), (2, 'b')] ✅
-
-B) [[1, 'a'], [2, 'b']]
-
-C) {'1':'a','2':'b'}
-
-D) None
-
-
-8.List comprehension [x*x for x in range(3)] results in:
-
-A) [1, 2, 3]
-
-B) [0, 1, 4] ✅
-
-C) [1, 4, 9]
-
-D) Error
-
-
-9.Which statement is correct?
-
-A) Python uses semi-colons
-
-B) def is used for loops
-
-C) lambda creates anonymous functions ✅
-
-D) Python supports multiple inheritance only through import
-
-
-10.How is a class defined?
-
-A) define Class():
-
-B) class MyClass ✅
-
-C) defclass MyClass:
-
-D) MyClass {}

@@ -134,6 +134,17 @@ $_SESSION['current_answer'] = $answer;
             color: #c62828;
             display: block;
         }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -181,59 +192,55 @@ $_SESSION['current_answer'] = $answer;
         document.addEventListener('DOMContentLoaded', function() {
             var codeInput = document.getElementById('codeInput');
             var answerForm = document.getElementById('answerForm');
+            var submitBtn = document.getElementById('submitBtn');
+            var resultDiv = document.getElementById('result');
             
             document.getElementById('resetBtn').addEventListener('click', function() {
                 codeInput.value = '';
-                document.getElementById('result').innerHTML = '';
-                document.getElementById('result').className = 'result-container';
+                resultDiv.innerHTML = '';
+                resultDiv.className = 'result-container';
             });
 
             answerForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 const code = codeInput.value;
+                submitBtn.disabled = true;
+                
                 if (!code.trim()) {
-                    const resultDiv = document.getElementById('result');
                     resultDiv.innerHTML = 'Please enter your answer.';
                     resultDiv.className = 'result-container error';
+                    submitBtn.disabled = false;
                     return;
                 }
-                  fetch('validate_answer.php', {
+                
+                var formData = new FormData();
+                formData.append('code', code);
+                formData.append('level', '<?php echo $level; ?>');
+                
+                fetch('validate_answer.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'code=' + encodeURIComponent(code) + '&level=<?php echo $level; ?>'
+                    body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function(data) {
                     resultDiv.innerHTML = data.message;
                     resultDiv.className = 'result-container ' + (data.success ? 'success' : 'error');
                     
                     if (data.success) {
-                        // Disable input and buttons on success
                         codeInput.disabled = true;
                         submitBtn.disabled = true;
                         document.getElementById('resetBtn').disabled = true;
-                        
-                        // Show success animation
-                        resultDiv.style.animation = 'pulse 1s';
-                        
-                        // Redirect after showing success message
-                        setTimeout(() => {
-                            window.location.href = data.redirect;
+                        resultDiv.style.animation = 'pulse 1s';                        setTimeout(function() {
+                            window.location.href = 'index.php';
                         }, 2000);
                     } else {
-                        // Re-enable submit button and shake the result div
                         submitBtn.disabled = false;
                         resultDiv.style.animation = 'shake 0.5s';
                     }
                 })
-                .catch(() => {
-                    resultDiv.innerHTML = '⚠️ Oops! Something went wrong. Please try again.';
-                    resultDiv.className = 'result-container error';
-                    submitBtn.disabled = false;
-                    resultDiv.style.animation = 'shake 0.5s';
-                });
+                
             });
         });
     </script>

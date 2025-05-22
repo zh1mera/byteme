@@ -1,116 +1,88 @@
 <?php
 session_start();
 require_once '../../../../db/db_connect.php';
+require_once '../../../../db/progress_functions.php';
+
+error_log("Starting validate_answer.php for PHP");
 
 header('Content-Type: application/json');
 
-if (!isset($_POST['code']) || !isset($_POST['level'])) {
-    echo json_encode(['success' => false, 'message' => 'Missing required parameters']);
-    exit;
+if (!isset($_SESSION['user_id'])) {
+    error_log("User not logged in");
+    echo json_encode(['success' => false, 'message' => 'Please log in to continue.']);
+    exit();
+}
+
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    error_log("Invalid request method: " . $_SERVER['REQUEST_METHOD']);
+    echo json_encode(['success' => false, 'message' => 'Invalid request method.']);
+    exit();
 }
 
 $userAnswer = trim($_POST['code']);
-$level = (int)$_POST['level'];
+$level = isset($_POST['level']) ? (int)$_POST['level'] : 1;
+$language = 'php';
 
-// Get the correct answer from puzzle files based on level
-function getCorrectAnswer($level) {
-    $filePath = "../../../../puzzles/beginner/php.txt";
-    if ($level > 3) {
-        $filePath = "../../../../puzzles/intermediate/php.txt";
-    }
-    if ($level > 6) {
-        $filePath = "../../../../puzzles/professional/php.txt";
-    }
-    
-    if (!file_exists($filePath)) {
-        return null;
-    }
-    
-    $content = file_get_contents($filePath);
-    $puzzles = [];
-    $currentPuzzle = [];
-    
-    foreach(explode("\n", $content) as $line) {
-        $line = trim($line);
-        if (empty($line) || strpos($line, '// filepath:') === 0) {
-            continue;
-        }
+error_log("Processing answer for user_id: {$_SESSION['user_id']}, level: {$level}, language: {$language}");
 
-        if (preg_match('/^(Level \d+:|\d+\.)/', $line)) {
-            if (!empty($currentPuzzle)) {
-                $puzzles[] = $currentPuzzle;
-            }
-            $currentPuzzle = ['level' => preg_replace('/[^0-9]/', '', $line)];
-        } elseif (strpos($line, 'Q:') === 0) {
-            $currentPuzzle['question'] = trim(substr($line, 2));
-        } elseif (strpos($line, 'A:') === 0 || strpos($line, 'Answer:') === 0) {
-            $currentPuzzle['answer'] = trim(strpos($line, 'A:') === 0 ? substr($line, 2) : substr($line, 7));
-        }
-    }
-    
-    if (!empty($currentPuzzle)) {
-        $puzzles[] = $currentPuzzle;
-    }
-    
-    foreach ($puzzles as $puzzle) {
-        if ($puzzle['level'] == $level) {
-            return $puzzle['answer'];
-        }
-    }
-    
-    return null;
+if (empty($userAnswer)) {
+    error_log("Empty answer submitted");
+    echo json_encode(['success' => false, 'message' => 'Please provide an answer.']);
+    exit();
 }
 
-$correctAnswer = getCorrectAnswer($level);
-
-if ($correctAnswer === null) {
-    echo json_encode(['success' => false, 'message' => 'Could not find puzzle for this level']);
-    exit;
+// Compare with correct answer from session
+if (!isset($_SESSION['current_answer'])) {
+    error_log("No current_answer in session");
+    echo json_encode(['success' => false, 'message' => 'Session expired. Please reload the page.']);
+    exit();
 }
 
-// First, record the attempt regardless of correctness
+$correctAnswer = trim($_SESSION['current_answer']);
+
+// Case-insensitive comparison after normalizing whitespace
+$normalizedUserAnswer = preg_replace('/\s+/', ' ', strtolower($userAnswer));
+$normalizedCorrectAnswer = preg_replace('/\s+/', ' ', strtolower($correctAnswer));
+
+$isCorrect = $normalizedUserAnswer === $normalizedCorrectAnswer;
+
+error_log("Answer comparison - isCorrect: " . ($isCorrect ? "true" : "false"));
+
 try {
-    // Get user's difficulty level
-    $stmt = $pdo->prepare("SELECT difficulty_level FROM users WHERE id = ?");
-    $stmt->execute([$_SESSION['user_id']]);
-    $user = $stmt->fetch();
+    // Insert the attempt into progress table
+    $stmt = $pdo->prepare("
+        INSERT INTO progress (user_id, language, difficulty, is_correct) 
+        VALUES (?, ?, 
+            CASE 
+                WHEN ? <= 3 THEN 'beginner'
+                WHEN ? <= 6 THEN 'intermediate'
+                ELSE 'professional'
+            END, 
+            ?)
+    ");
+    
+    $insertResult = $stmt->execute([$_SESSION['user_id'], $language, $level, $level, $isCorrect]);
+    error_log("Progress insert result: " . ($insertResult ? "success" : "failed"));
 
-    if (!$user) {
-        throw new Exception("User not found");
-    }
-
-    // Compare user's answer with correct answer (ignoring whitespace and case)
-    $cleanUserAnswer = preg_replace('/\s+/', ' ', trim(strtolower($userAnswer)));
-    $cleanCorrectAnswer = preg_replace('/\s+/', ' ', trim(strtolower($correctAnswer)));
-
-    $isCorrect = ($cleanUserAnswer === $cleanCorrectAnswer);
-
-    // Record the attempt
-    $stmt = $pdo->prepare("INSERT INTO progress (user_id, language, difficulty, is_correct, created_at)
-        VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)");
-    $stmt->execute([
-        $_SESSION['user_id'],
-        'php',
-        $user['difficulty_level'],
-        $isCorrect
-    ]);
-
+    // If answer is correct, update their language progress
     if ($isCorrect) {
-        echo json_encode([
-            'success' => true,
-            'message' => '✨ Great job! You solved the puzzle correctly! Moving to the next level...',
-            'redirect' => 'index.php'
-        ]);    } else {
-        echo json_encode([
-            'success' => false,
-            'message' => '🤔 Almost there! Double-check your answer and try again.'
-        ]);
+        $updateResult = updateLanguageProgress($_SESSION['user_id'], $language, $level, true);
+        error_log("Language progress update result: " . ($updateResult ? "success" : "failed"));
     }
-} catch (Exception $e) {
-    error_log("Error processing submission: " . $e->getMessage());
+
     echo json_encode([
-        'success' => false, 
-        'message' => '⚠️ An error occurred while processing your submission. Please try again.'
+        'success' => $isCorrect,
+        'message' => $isCorrect ? 
+            'Congratulations! Your answer is correct! 🎉 Redirecting to levels page...' : 
+            'That\'s not quite right. Try again! 🤔'
+    ]);
+} catch (PDOException $e) {
+    error_log("Database error in validate_answer.php: " . $e->getMessage());
+    echo json_encode([
+        'success' => $isCorrect,
+        'message' => $isCorrect ? 
+            'Congratulations! Your answer is correct! 🎉 Redirecting to levels page...' : 
+            'That\'s not quite right. Try again! 🤔'
     ]);
 }
 ?>

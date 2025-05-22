@@ -134,6 +134,17 @@ $_SESSION['current_answer'] = $answer;
             color: #c62828;
             display: block;
         }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -162,10 +173,8 @@ $_SESSION['current_answer'] = $answer;
         
         <div class="challenge-description">
             <p><?php echo htmlspecialchars($question); ?></p>
-        </div>
-
-        <div class="challenge-content">
-            <form id="answerForm" onsubmit="return false;">
+        </div>        <div class="challenge-content">
+            <form id="answerForm">
                 <textarea id="codeInput" name="code" placeholder="Write your code here..."></textarea>
                 <div class="button-container">
                     <button type="submit" id="submitBtn" class="submit-btn">Submit</button>
@@ -179,32 +188,49 @@ $_SESSION['current_answer'] = $answer;
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var codeInput = document.getElementById('codeInput');
-            var answerForm = document.getElementById('answerForm');
+            const codeInput = document.getElementById('codeInput');
+            const answerForm = document.getElementById('answerForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            const resetBtn = document.getElementById('resetBtn');
             
-            document.getElementById('resetBtn').addEventListener('click', function() {
+            // Reset button handler
+            resetBtn.addEventListener('click', function() {
                 codeInput.value = '';
-                document.getElementById('result').innerHTML = '';
-                document.getElementById('result').className = 'result-container';
-            });
-
+                resultDiv.innerHTML = '';
+                resultDiv.className = 'result-container';
+                submitBtn.disabled = false;
+            });            // Submit form handler
             answerForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                const code = codeInput.value;
-                if (!code.trim()) {
-                    const resultDiv = document.getElementById('result');
+                console.log('Form submission triggered');
+                
+                const code = codeInput.value.trim();
+                if (!code) {
                     resultDiv.innerHTML = 'Please enter your answer.';
                     resultDiv.className = 'result-container error';
                     return;
                 }
-                  fetch('validate_answer.php', {
+                console.log('Code value:', code);
+
+                // Disable submit button while processing
+                submitBtn.disabled = true;
+                
+                // Create FormData object
+                const formData = new FormData();
+                formData.append('code', code);
+                formData.append('level', '<?php echo $level; ?>');
+                
+                fetch('validate_answer.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'code=' + encodeURIComponent(code) + '&level=<?php echo $level; ?>'
+                    body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     resultDiv.innerHTML = data.message;
                     resultDiv.className = 'result-container ' + (data.success ? 'success' : 'error');
@@ -213,26 +239,33 @@ $_SESSION['current_answer'] = $answer;
                         // Disable input and buttons on success
                         codeInput.disabled = true;
                         submitBtn.disabled = true;
-                        document.getElementById('resetBtn').disabled = true;
+                        resetBtn.disabled = true;
                         
                         // Show success animation
                         resultDiv.style.animation = 'pulse 1s';
                         
                         // Redirect after showing success message
                         setTimeout(() => {
-                            window.location.href = data.redirect;
+                            window.location.href = 'index.php';
                         }, 2000);
                     } else {
                         // Re-enable submit button and shake the result div
                         submitBtn.disabled = false;
                         resultDiv.style.animation = 'shake 0.5s';
+                        setTimeout(() => {
+                            resultDiv.style.animation = '';
+                        }, 500);
                     }
                 })
-                .catch(() => {
-                    resultDiv.innerHTML = '⚠️ Oops! Something went wrong. Please try again.';
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = '⚠️ An error occurred while checking your answer. Please try again.';
                     resultDiv.className = 'result-container error';
                     submitBtn.disabled = false;
                     resultDiv.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        resultDiv.style.animation = '';
+                    }, 500);
                 });
             });
         });

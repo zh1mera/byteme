@@ -1,108 +1,40 @@
-1.What is the default value of a boolean in Java?
+Level 1:
+Q: What is the default value of a boolean in Java?
+A: false
 
-A) 0
+Level 2:
+Q: What keyword prevents inheritance?
+A: final
 
-B) true
+Level 3:
+Q: Which collection does not allow duplicates?
+A: HashSet
 
-C) false ✅
+Level 4:
+Q: What is the result of 5/2 in Java?
+A: 2
 
-D) null
+Level 5:
+Q: What is the parent of all classes?
+A: Object
 
+Level 6:
+Q: What is method overloading?
+A: Same name, different parameters
 
-2.What keyword prevents inheritance?
+Level 7:
+Q: Interface can contain:
+A: Static methods
 
-A) static
+Level 8:
+Q: What is null instanceof Object?
+A: false
 
-B) final ✅
+Level 9:
+Q: Java is:
+A: Compiled then interpreted
 
-C) sealed
+Level 10:
+Q: Which of these creates an object?
+A: Class a = new Class();
 
-D) private
-
-
-3.Which collection does not allow duplicates?
-
-A) List
-
-B) ArrayList
-
-C) HashSet ✅
-
-D) LinkedList
-
-
-4.What is the result of 5/2 in Java?
-
-A) 2.5
-
-B) 2 ✅
-
-C) 2.0
-
-D) Error
-
-
-5.What is the parent of all classes?
-
-A) Object ✅
-
-B) Class
-
-C) Super
-
-D) Base
-
-
-6.What is method overloading?
-
-A) Same name, different return types
-
-B) Same name, different parameters ✅
-
-C) Same class, same signature
-
-D) Abstract methods
-
-
-7.Interface can contain:
-
-A) Constructors
-
-B) Static methods ✅
-
-C) Private fields
-
-D) Protected methods only
-
-
-8.What is null instanceof Object?
-
-A) true
-
-B) false ✅
-
-C) error
-
-D) null
-
-
-9.Java is:
-
-A) Interpreted only
-
-B) Compiled only
-
-C) Compiled then interpreted ✅
-
-D) Scripting language
-
-
-10.Which of these creates an object?
-
-A) Class a;
-
-B) Class a = new Class(); ✅
-
-C) object a;
-
-D) define a = Class

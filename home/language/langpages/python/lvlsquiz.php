@@ -12,6 +12,9 @@ require_once '../../../../db/progress_functions.php';
 $level = isset($_GET['level']) ? (int)$_GET['level'] : 1;
 $language = 'python';
 
+// Set the current language in session
+$_SESSION['current_language'] = $language;
+
 // Get the puzzle for this level
 function getPuzzleForLevel($level) {
     $filePath = "../../../../puzzles/beginner/python.txt";
@@ -68,7 +71,7 @@ function getPuzzleForLevel($level) {
 
 $puzzle = getPuzzleForLevel($level);
 $question = $puzzle ? $puzzle['question'] : 'No puzzle available for this level.';
-$answer = $puzzle ? $puzzle['answer'] : '';
+$answer = $puzzle ? $puzzle['answer'] : ' ';
 $_SESSION['current_answer'] = $answer;
 ?>
 <!DOCTYPE html>
@@ -215,12 +218,16 @@ $_SESSION['current_answer'] = $answer;
                 const submitBtn = document.getElementById('submitBtn');
                 submitBtn.disabled = true;
                 
-                const formData = new FormData(answerForm);
-                  fetch('validate_answer.php', {
+                const formData = new FormData(answerForm);                fetch('validate_answer.php', {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     resultDiv.innerHTML = data.message;
                     resultDiv.className = 'result-container ' + (data.success ? 'success' : 'error');
@@ -243,15 +250,15 @@ $_SESSION['current_answer'] = $answer;
                         submitBtn.disabled = false;
                         resultDiv.style.animation = 'shake 0.5s';
                     }
-                })
-                .catch(() => {
-                    resultDiv.innerHTML = '⚠️ Oops! Something went wrong. Please try again.';
+                })                .catch((error) => {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = '⚠️ Oops! Something went wrong. Please try again. Error: ' + error.message;
                     resultDiv.className = 'result-container error';
                     submitBtn.disabled = false;
                     resultDiv.style.animation = 'shake 0.5s';
                 });
         });
-    });
-    </script>
+    });    </script>
+    <script src="../../js/answer-handler.js"></script>
 </body>
 </html>

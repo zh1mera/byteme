@@ -14,48 +14,34 @@ $language = 'php';
 
 // Get the puzzle for this level
 function getPuzzleForLevel($level) {
-    // Determine which file to use based on level
-    $originalLevel = $level; // Store original level for debugging
-    $adjustedLevel = $level; // This will be the adjusted level number
-    
-    if ($level <= 3) {
-        $filePath = "../../../../puzzles/beginner/php.txt";
-        // Level stays the same for beginner (1-3)
-    } elseif ($level <= 6) {
+    $filePath = "../../../../puzzles/beginner/php.txt";
+    if ($level > 3) {
         $filePath = "../../../../puzzles/intermediate/php.txt";
-        // Adjust level number for intermediate file (4-6 becomes 1-3)
-        $adjustedLevel = $level - 3;
-    } else {
+    }
+    if ($level > 6) {
         $filePath = "../../../../puzzles/professional/php.txt";
-        // Adjust level number for professional file (7-10 becomes 1-4)
-        $adjustedLevel = $level - 6;
     }
     
-    error_log("Original level: " . $originalLevel . ", Adjusted level: " . $adjustedLevel . ", File: " . $filePath);
-    
     if (!file_exists($filePath)) {
-        error_log("Puzzle file not found: " . $filePath);
         return null;
     }
     
     $content = file_get_contents($filePath);
     $puzzles = [];
     $currentPuzzle = [];
-      foreach(explode("\n", $content) as $line) {
+    
+    foreach(explode("\n", $content) as $line) {
         $line = trim($line);
         if (empty($line) || strpos($line, '// filepath:') === 0) {
             continue;
         }
-        
-        // If line starts with a number
-        if (preg_match('/^\d+/', $line)) {
+
+        if (preg_match('/^(Level \d+:|\d+\.)/', $line)) {
             if (!empty($currentPuzzle)) {
                 $puzzles[] = $currentPuzzle;
             }
-            $levelNum = preg_replace('/[^0-9]/', '', $line);
-            $currentPuzzle = ['level' => $levelNum];
-            // Extract question (everything after the number and any separators)
-            $question = preg_replace('/^\d+\.?\s*/', '', $line);
+            $currentPuzzle = ['level' => preg_replace('/[^0-9]/', '', $line)];
+            $question = preg_replace('/^(Level \d+:|\d+\.)\s*/', '', $line);
             if ($question) {
                 $currentPuzzle['question'] = $question;
             }
@@ -65,39 +51,24 @@ function getPuzzleForLevel($level) {
             $currentPuzzle['answer'] = trim(strpos($line, 'A:') === 0 ? substr($line, 2) : substr($line, 7));
         }
     }
-      if (!empty($currentPuzzle) && isset($currentPuzzle['level']) && isset($currentPuzzle['question'])) {
+    
+    if (!empty($currentPuzzle)) {
         $puzzles[] = $currentPuzzle;
     }
-      error_log("Puzzles array: " . print_r($puzzles, true));
     
-    // Look for puzzle with matching adjusted level
+    // Find a puzzle matching the level or closest to it
     foreach ($puzzles as $puzzle) {
-        if (isset($puzzle['level']) && $puzzle['level'] == $adjustedLevel) {
-            error_log("Found matching puzzle for level " . $adjustedLevel);
+        if ($puzzle['level'] == $level) {
             return $puzzle;
         }
     }
     
-    error_log("No puzzle found for level " . $adjustedLevel);
-    return null;
+    return $puzzles[0]; // Return first puzzle if no match found
 }
 
 $puzzle = getPuzzleForLevel($level);
-
-// Debug information
-error_log("Level requested: " . $level);
-error_log("Puzzle found: " . print_r($puzzle, true));
-
-if (!$puzzle || !isset($puzzle['question']) || !isset($puzzle['level'])) {
-    $puzzle = [
-        'level' => $level,
-        'question' => 'No puzzle available for this level.',
-        'answer' => ''
-    ];
-}
-
-$question = $puzzle['question'];
-$answer = isset($puzzle['answer']) ? $puzzle['answer'] : '';
+$question = $puzzle ? $puzzle['question'] : 'No puzzle available for this level.';
+$answer = $puzzle ? $puzzle['answer'] : '';
 $_SESSION['current_answer'] = $answer;
 ?>
 <!DOCTYPE html>
@@ -105,8 +76,7 @@ $_SESSION['current_answer'] = $answer;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHP Level <?php echo $level; ?> - BYTEMe</title>
-    <link rel="stylesheet" href="../../../../assets/css/style.css">
+    <title>php Level <?php echo $level; ?> - BYTEMe</title>    <link rel="stylesheet" href="../../../../assets/css/style.css">
     <link rel="stylesheet" href="../../../css/home.css">
     <link rel="stylesheet" href="../../../challenges/css/challenges.css">
     <style>
@@ -154,15 +124,32 @@ $_SESSION['current_answer'] = $answer;
             border-radius: 5px;
             display: none;
         }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
         .result-container.success {
             background: #e8f5e9;
             color: #2e7d32;
             display: block;
+            border-left: 4px solid #2e7d32;
         }
         .result-container.error {
             background: #ffebee;
             color: #c62828;
             display: block;
+            border-left: 4px solid #c62828;
+        }
+        /* Improve button styling */
+        .button-container button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -173,7 +160,7 @@ $_SESSION['current_answer'] = $answer;
         </button>
         <div class="nav-links">
             <a href="../../../challenges/index.php">Daily Challenges</a>
-            <a href="../../index.php" class="active">Languages</a>
+            <a href="../../index.php">Languages</a>
             <?php if ($_SESSION['role'] === 'admin'): ?>
             <a href="../../../../admin.php">Admin</a>
             <?php endif; ?>
@@ -183,19 +170,16 @@ $_SESSION['current_answer'] = $answer;
         </div>
     </nav>
 
-    <main class="challenge-container">
-        <div class="challenge-header">
+    <main class="challenge-container">        <div class="challenge-header">
             <button onclick="window.location.href='index.php'" style="padding: 8px 15px; margin-bottom: 10px; border: none; border-radius: 5px; background: #f0f0f0; cursor: pointer;">← Back</button>
             <h1>Level <?php echo $level; ?></h1>
-            <div class="language-badge" style="background-color: #777BB3;">PHP</div>
+            <div class="language-badge" style="background-color: #3572A5;">php</div>
         </div>
         
         <div class="challenge-description">
             <p><?php echo htmlspecialchars($question); ?></p>
-        </div>
-
-        <div class="challenge-content">
-            <form id="answerForm" onsubmit="return false;">
+        </div>        <div class="challenge-content">            <form id="answerForm" onsubmit="return false;">
+                <input type="hidden" name="level" value="<?php echo $level; ?>">
                 <textarea id="codeInput" name="code" placeholder="Write your code here..."></textarea>
                 <div class="button-container">
                     <button type="submit" id="submitBtn" class="submit-btn">Submit</button>
@@ -205,36 +189,44 @@ $_SESSION['current_answer'] = $answer;
         </div>
 
         <div id="result" class="result-container"></div>
-    </main>
-
-    <script>
+    </main>    <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var codeInput = document.getElementById('codeInput');
-            var answerForm = document.getElementById('answerForm');
+            const codeInput = document.getElementById('codeInput');
+            const answerForm = document.getElementById('answerForm');
+            const resultDiv = document.getElementById('result');
             
             document.getElementById('resetBtn').addEventListener('click', function() {
                 codeInput.value = '';
-                document.getElementById('result').innerHTML = '';
-                document.getElementById('result').className = 'result-container';
+                resultDiv.innerHTML = '';
+                resultDiv.className = 'result-container';
             });
 
             answerForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+                
                 const code = codeInput.value;
                 if (!code.trim()) {
-                    const resultDiv = document.getElementById('result');
                     resultDiv.innerHTML = 'Please enter your answer.';
                     resultDiv.className = 'result-container error';
                     return;
                 }
-                  fetch('validate_answer.php', {
+
+                // Disable submit button while processing
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                
+                const formData = new FormData(answerForm);
+                
+                fetch('validate_answer.php', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    },
-                    body: 'code=' + encodeURIComponent(code) + '&level=<?php echo $level; ?>'
+                    body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     resultDiv.innerHTML = data.message;
                     resultDiv.className = 'result-container ' + (data.success ? 'success' : 'error');
@@ -244,25 +236,32 @@ $_SESSION['current_answer'] = $answer;
                         codeInput.disabled = true;
                         submitBtn.disabled = true;
                         document.getElementById('resetBtn').disabled = true;
-                        
+
                         // Show success animation
                         resultDiv.style.animation = 'pulse 1s';
                         
                         // Redirect after showing success message
                         setTimeout(() => {
-                            window.location.href = data.redirect;
+                            window.location.href = 'index.php';
                         }, 2000);
                     } else {
                         // Re-enable submit button and shake the result div
                         submitBtn.disabled = false;
                         resultDiv.style.animation = 'shake 0.5s';
+                        setTimeout(() => {
+                            resultDiv.style.animation = '';
+                        }, 500);
                     }
                 })
-                .catch(() => {
-                    resultDiv.innerHTML = '⚠️ Oops! Something went wrong. Please try again.';
+                .catch((error) => {
+                    console.error('Error:', error);
+                    resultDiv.innerHTML = '⚠️ An error occurred while checking your answer. Please try again.';
                     resultDiv.className = 'result-container error';
                     submitBtn.disabled = false;
                     resultDiv.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        resultDiv.style.animation = '';
+                    }, 500);
                 });
             });
         });

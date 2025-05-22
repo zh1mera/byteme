@@ -52,7 +52,7 @@ try {
         </div>
     </div>    <main class="home-container">
         <section class="welcome-section">
-            <h1 style="margin-top: 800px;">Welcome to Your Coding Journey</h1>
+            <h1 style="margin-top: 2200px;">Welcome to Your Coding Journey</h1>
             <p>Level: <strong><?php echo ucfirst(htmlspecialchars($user['difficulty_level'])); ?></strong></p>
         </section>        <section class="quick-actions">
             <div class="action-card progress-card">
