@@ -33,3 +33,20 @@ BYTEme is a programming learning app that helps students understand coding funda
 6. Access the app in your browser:
    ```arduino
    http://localhost/byteme/welcom.php
+
+### Run on Desktop (Electron)
+1. Clone the project and navigate to the folder:
+   ```bash
+   git clone https://github.com/yourusername/byteme.git
+   cd byteme
+
+2. Make sure Node.js is installed.
+   Install Electron:
+   ``bash
+   npm install electron --save-dev
+
+3. Run the desktop app:
+   ``bash
+   npx electron .
+   
+## Make sure your PHP server is running if your Electron app depends on backend interaction.
