@@ -32,7 +32,7 @@ BYTEme is an educational programming app designed to help students grasp the fun
 
 6. Access the app in your browser:
    ```arduino
-   http://localhost/byteme/welcom.php
+   http://localhost/byteme/welcome.php
 
 ### Run on Desktop (Electron)
 1. Clone the project and navigate to the folder:
