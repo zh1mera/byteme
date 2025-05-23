@@ -46,8 +46,7 @@ BYTEme is an educational programming app designed to help students grasp the fun
    npm install electron --save-dev
 
 3. Run the desktop app:
-   ``bash
+   ```bash
    npx electron .
-
 
 ## Make sure your PHP server is running if your Electron app depends on backend interaction.
