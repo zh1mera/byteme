@@ -103,7 +103,7 @@ try {
 
         <section class="profile-section user-info">
             <div class="info-card">
-                <h2 style="margin-top: 1100px;">Account Information</h2>
+                <h2 style="margin-top: 1300px;">Account Information</h2>
                 <div class="user-details">
                     <h1 class="username"><?php echo htmlspecialchars($user['username'] ?? ''); ?></h1>
                     <p class="email"><i class="email-icon"></i><?php echo htmlspecialchars($user['email'] ?? ''); ?></p>
@@ -118,8 +118,7 @@ try {
         <section class="profile-section languages">
             <h2>Language Proficiency</h2>
             <div class="languages-grid">
-                <?php foreach ($languages as $name => $info): 
-                    // Initialize variables for this language
+                <?php foreach ($languages as $name => $info):                    // Initialize variables for this language
                     $progress = 0;
                     $attempts = 0;
                     $correct = 0;
@@ -127,6 +126,7 @@ try {
                     $proficiency_level = 'beginner';
                     $last_attempt = null;
                     $min_attempts = null;
+                    $success_rate = 0;
                     
                     error_log("Processing language: " . $name);
                       // Get progress from user_progress table
@@ -143,12 +143,12 @@ try {
                     }
                     
                     // If no progress found in level_progress, check language array
-                    if ($progress === 0 && !empty($progressData['language'])) {
-                        foreach ($progressData['language'] as $lang) {
+                    if ($progress === 0 && !empty($progressData['language'])) {                        foreach ($progressData['language'] as $lang) {
                             if (strtolower($lang['language']) === strtolower($name)) {
                                 $attempts = $lang['total_attempts'];
-                                $correct = $lang['correct_attempts'];                                if ($attempts > 0) {
-                                    $success_rate = number_format(($correct / $attempts) * 100, 2);
+                                $correct = $lang['correct_attempts'];
+                                $success_rate = $attempts > 0 ? number_format(($correct / $attempts) * 100, 2) : 0;
+                                if ($attempts > 0) {
                                     $level_completed = floor($correct / 3) + 1;
                                     $progress = number_format(min(($level_completed / 9) * 100, 100), 2);
                                 }
@@ -156,13 +156,13 @@ try {
                             }
                         }
                     }
-                    
-                    // Get attempt statistics
+                      // Get attempt statistics
                     if (!empty($progressData['language'])) {
                         foreach ($progressData['language'] as $lang) {
                             if (strtolower($lang['language']) === strtolower($name)) {
                                 $attempts = $lang['total_attempts'];
                                 $correct = $lang['correct_attempts'];
+                                // Calculate success rate
                                 $success_rate = $attempts > 0 ? number_format(($correct / $attempts) * 100, 2) : 0;
                                 $last_attempt = $lang['last_attempt'] ?? null;
                                 $min_attempts = $lang['min_attempts_to_success'] ?? null;

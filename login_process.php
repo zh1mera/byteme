@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 
                 // Redirect based on role and whether difficulty is set
                 if ($user['role'] === 'admin') {
-                    header("Location: admin.php");
+                    header("Location: admin_home.php");
                 } else {
                     // Check if user has set difficulty
                     $stmt = $pdo->prepare("SELECT difficulty_level FROM users WHERE id = ?");

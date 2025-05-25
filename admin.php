@@ -38,11 +38,11 @@ try {
 </head>
 <body>
     <div class="admin-container">
-        <div class="admin-header">
-            <h1>Admin Dashboard</h1>
+        <div class="admin-header" style="margin-top: 200px;">
+            <h1><span>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span></h1>
             <div class="admin-nav">
-                <span>Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></span>
-                <a href="welcome.php" class="button">Home</a>
+                <a href="adminpuzz.php" class="button" style="margin-right: 10px;">View Puzzles</a>
+                <a href="admin_home.php" class="button">Home</a>
                 <a href="logout.php" class="button">Logout</a>
             </div>
         </div>
@@ -55,7 +55,7 @@ try {
             <div class="error-message"><?php echo htmlspecialchars($errorMessage); ?></div>
         <?php endif; ?>
 
-        <div class="users-table">
+        <div class="users-table" style="margin-bottom: 200px;">
             <h2>User Management</h2>
             <table>
                 <thead>

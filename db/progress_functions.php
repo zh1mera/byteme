@@ -29,20 +29,13 @@ function getUserProgress($user_id) {
             ");
             $stmt->execute([$user_id, $lang]);
             $counts = $stmt->fetch(PDO::FETCH_ASSOC);
+              // Calculate progress using helper function
+            $correct_answers = $counts['correct_answers'] ?? 0;
+            $progress_info = calculateUserProgress($correct_answers);
             
-            // Calculate current level (3 correct answers per level)
-            $currentLevel = floor(($counts['correct_answers'] ?? 0) / 3) + 1;
-            $currentLevel = min($currentLevel, 9); // Cap at level 9
-            
-            // Calculate proficiency
-            $proficiency = 'beginner';
-            if ($currentLevel > 6) {
-                $proficiency = 'professional';
-            } elseif ($currentLevel > 3) {
-                $proficiency = 'intermediate';
-            }
-              // Calculate progress percentage with 2 decimal places
-            $progress_percentage = number_format(($currentLevel / 9) * 100, 2);
+            $currentLevel = $progress_info['level'];
+            $progress_percentage = $progress_info['progress'];
+            $proficiency = $progress_info['proficiency'];
             
             // Add to level progress array
             $progress['level_progress'][] = [
@@ -248,22 +241,11 @@ function updateLanguageProgress($user_id, $language, $level, $is_correct) {
         $stmt->execute([$user_id, $language]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
         $totalCorrect = $result['total_correct'];
-        
-        // Calculate level (every 3 correct answers = 1 level)
-        $currentLevel = floor($totalCorrect / 3) + 1;
-        $currentLevel = min($currentLevel, 9); // Cap at level 9
-        
-        // Calculate proficiency based on current level
-        if ($currentLevel <= 3) {
-            $proficiency_level = 'beginner';
-        } elseif ($currentLevel <= 6) {
-            $proficiency_level = 'intermediate';
-        } else {
-            $proficiency_level = 'professional';
-        }
-        
-        // Calculate progress percentage
-        $progress_percentage = ($currentLevel / 9) * 100;
+          // Calculate progress using helper function
+        $progress_info = calculateUserProgress($totalCorrect);
+        $currentLevel = $progress_info['level'];
+        $proficiency_level = $progress_info['proficiency'];
+        $progress_percentage = $progress_info['progress'];
         
         // First check if we have a record
         $stmt = $pdo->prepare("SELECT * FROM user_progress WHERE user_id = ? AND language_name = ?");
@@ -338,6 +320,39 @@ function getLanguageProgress($user_id) {
         error_log("Error getting language progress: " . $e->getMessage());
         return [];
     }
+}
+
+// Helper function to calculate user level and progress
+function calculateUserProgress($correct_answers) {
+    // For new users with no correct answers, start at level 0 with 0% progress
+    if ($correct_answers <= 0) {
+        return [
+            'level' => 0,
+            'progress' => 0,
+            'proficiency' => 'beginner'
+        ];
+    }
+
+    // Calculate level (3 correct answers per level)
+    $level = floor($correct_answers / 3) + 1;
+    $level = min($level, 9); // Cap at level 9
+
+    // Calculate proficiency
+    $proficiency = 'beginner';
+    if ($level > 6) {
+        $proficiency = 'professional';
+    } elseif ($level > 3) {
+        $proficiency = 'intermediate';
+    }
+
+    // Calculate progress percentage
+    $progress = ($level / 9) * 100;
+
+    return [
+        'level' => $level,
+        'progress' => number_format($progress, 2),
+        'proficiency' => $proficiency
+    ];
 }
 ?>
 
