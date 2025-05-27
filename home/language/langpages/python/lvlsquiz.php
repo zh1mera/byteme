@@ -236,14 +236,19 @@ $_SESSION['current_answer'] = $answer;
                         // Disable input and buttons on success
                         codeInput.disabled = true;
                         submitBtn.disabled = true;
-                        document.getElementById('resetBtn').disabled = true;
-
-                        // Show confetti animation or other success indicator
+                        document.getElementById('resetBtn').disabled = true;                        // Show confetti animation or other success indicator
                         resultDiv.style.animation = 'pulse 1s';
                         
-                        // Redirect after showing success message
+                        // Get current level and redirect accordingly
+                        const currentLevel = <?php echo $level; ?>;
                         setTimeout(() => {
-                            window.location.href = 'index.php';
+                            if (currentLevel < 10) {
+                                // Go to next level
+                                window.location.href = `lvlsquiz.php?level=${currentLevel + 1}`;
+                            } else {
+                                // Completed all levels, go back to languages page
+                                window.location.href = '../../index.php';
+                            }
                         }, 2000);
                     } else {
                         // Re-enable submit button and shake the result div

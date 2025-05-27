@@ -232,8 +232,16 @@ $_SESSION['current_answer'] = $answer;
                         codeInput.disabled = true;
                         submitBtn.disabled = true;
                         document.getElementById('resetBtn').disabled = true;
-                        resultDiv.style.animation = 'pulse 1s';                        setTimeout(function() {
-                            window.location.href = 'index.php';
+                        resultDiv.style.animation = 'pulse 1s';
+                        const currentLevel = <?php echo $level; ?>;
+                        setTimeout(() => {
+                            if (currentLevel < 10) {
+                                // Go to next level
+                                window.location.href = `lvlsquiz.php?level=${currentLevel + 1}`;
+                            } else {
+                                // Completed all levels, go back to languages page
+                                window.location.href = '../../index.php';
+                            }
                         }, 2000);
                     } else {
                         submitBtn.disabled = false;

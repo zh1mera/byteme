@@ -45,223 +45,319 @@ if (isset($_GET['get_puzzles']) && $_GET['get_puzzles'] == 1) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>View Puzzles - Admin</title>
-<style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f9f9f9;
-        margin: 0;
-        padding: 0;
-        color: #333;
-    }
-    .container {
-        max-width: 900px;
-        margin: 40px auto;
-        background: #fff;
-        padding: 30px 40px;
-        border-radius: 8px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-    a.back-button {
-        text-decoration: none;
-        color: #007bff;
-        font-weight: 600;
-        display: inline-block;
-        margin-bottom: 25px;
-        transition: color 0.2s;
-    }
-    a.back-button:hover {
-        color: #0056b3;
-        text-decoration: underline;
-    }
-    h1 {
-        margin-bottom: 25px;
-        font-weight: 700;
-    }
-    .difficulty-btns, .language-btns {
-        margin-bottom: 15px;
-    }
-    .language-btns {
-        display: none;
-    }
-    .language-btns.active {
-        display: block;
-    }
-    button.btn, button.lang-btn {
-        padding: 10px 18px;
-        background-color: #007bff;
-        border: none;
-        color: white;
-        border-radius: 6px;
-        cursor: pointer;
-        margin: 5px 8px 10px 0;
-        font-size: 15px;
-        font-weight: 600;
-        transition: background-color 0.25s ease;
-        user-select: none;
-    }
-    button.btn:hover, button.lang-btn:hover {
-        background-color: #0056b3;
-    }
-    button.active {
-        background-color: #0056b3 !important;
-        box-shadow: 0 0 6px #0056b3aa;
-    }
-    #puzzle-list {
-        margin-top: 20px;
-    }
-    textarea#full-puzzle-text {
-        width: 100%;
-        min-height: 350px;
-        font-family: 'Courier New', Courier, monospace;
-        font-size: 15px;
-        padding: 15px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        resize: vertical;
-        box-shadow: inset 0 1px 3px #ddd;
-        transition: border-color 0.3s;
-    }
-    textarea#full-puzzle-text:focus {
-        border-color: #007bff;
-        outline: none;
-        box-shadow: 0 0 6px #007bff66 inset;
-    }
-    button#save-full-puzzle {
-        margin-top: 15px;
-        padding: 12px 25px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-        user-select: none;
-    }
-    button#save-full-puzzle:hover {
-        background-color: #218838;
-    }
-</style>
+    <meta charset="UTF-8" />
+    <title>View Puzzles - Admin</title>
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <style>
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .puzzle-container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            width: 1000px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .button-container {
+            margin: 20px 0;
+        }
+
+        .difficulty-btns, .language-btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: nowrap;
+            margin-bottom: 20px;
+        }
+
+        .language-btns {
+            display: none !important;
+        }
+
+        .language-btns.active {
+            display: flex !important;
+        }
+
+        button.btn, button.lang-btn {
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: black;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            white-space: nowrap;
+        }
+
+        button.btn:hover, button.lang-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        button.active {
+            background-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 6px rgba(0, 86, 179, 0.5);
+        }
+
+        textarea#full-puzzle-text {
+            width: 100%;
+            min-height: 400px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            resize: vertical;
+            box-sizing: border-box;
+            margin-bottom: 15px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        textarea#full-puzzle-text:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.25);
+        }
+
+        button#save-full-puzzle {
+            width: auto;
+            padding: 12px 24px;
+            background-color: #28a745;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button#save-full-puzzle:hover {
+            background-color: #218838;
+        }
+
+        .button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            background-color: rgba(0, 0, 0, 0.1);
+            color: black;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            margin-left: 10px;
+        }
+
+        .button:hover {
+            background-color: #0073E6;
+        }
+
+        #success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-<div class="container">
-    <a href="admin.php" class="back-button">&larr; Back to Admin Dashboard</a>
-    <h1>View Puzzles</h1>
+    <div class="container">
+        <div class="header">
+            <h1><span>Puzzle Management</span></h1>
+            <div>
+                <a href="admin_home.php" class="button">Back to Dashboard</a>
+                <a href="logout.php" class="button">Logout</a>
+            </div>
+        </div>
 
-    <div class="difficulty-btns">
-        <button class="btn" data-difficulty="beginner">Beginner</button>
-        <button class="btn" data-difficulty="intermediate">Intermediate</button>
-        <button class="btn" data-difficulty="professional">Professional</button>
+        <div class="puzzle-container">
+            <div id="success-message"></div>
+
+            <div class="button-container">
+                <h2>Select Difficulty</h2>
+                <div class="difficulty-btns">
+                    <button class="btn" data-difficulty="beginner">Beginner</button>
+                    <button class="btn" data-difficulty="intermediate">Intermediate</button>
+                    <button class="btn" data-difficulty="professional">Professional</button>
+                </div>
+
+                <div id="language-section" style="display: none;">
+                    <h2>Select Language</h2>
+                    <div class="language-btns" id="beginner-langs">
+                        <button class="lang-btn" data-language="python">Python</button>
+                        <button class="lang-btn" data-language="javascript">JavaScript</button>
+                        <button class="lang-btn" data-language="java">Java</button>
+                        <button class="lang-btn" data-language="php">PHP</button>
+                    </div>
+                    <div class="language-btns" id="intermediate-langs">
+                        <button class="lang-btn" data-language="python">Python</button>
+                        <button class="lang-btn" data-language="javascript">JavaScript</button>
+                        <button class="lang-btn" data-language="java">Java</button>
+                        <button class="lang-btn" data-language="php">PHP</button>
+                    </div>
+                    <div class="language-btns" id="professional-langs">
+                        <button class="lang-btn" data-language="python">Python</button>
+                        <button class="lang-btn" data-language="javascript">JavaScript</button>
+                        <button class="lang-btn" data-language="java">Java</button>
+                        <button class="lang-btn" data-language="php">PHP</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="puzzle-list">
+                <p>Select a difficulty and language to view puzzles.</p>
+            </div>
+        </div>
     </div>
 
-    <div class="language-btns" id="beginner-langs">
-        <button class="lang-btn" data-language="python">Python</button>
-        <button class="lang-btn" data-language="javascript">JavaScript</button>
-        <button class="lang-btn" data-language="java">Java</button>
-        <button class="lang-btn" data-language="php">PHP</button>
-    </div>
-    <div class="language-btns" id="intermediate-langs">
-        <button class="lang-btn" data-language="python">Python</button>
-        <button class="lang-btn" data-language="javascript">JavaScript</button>
-        <button class="lang-btn" data-language="java">Java</button>
-        <button class="lang-btn" data-language="php">PHP</button>
-    </div>
-    <div class="language-btns" id="professional-langs">
-        <button class="lang-btn" data-language="python">Python</button>
-        <button class="lang-btn" data-language="javascript">JavaScript</button>
-        <button class="lang-btn" data-language="java">Java</button>
-        <button class="lang-btn" data-language="php">PHP</button>
-    </div>
-
-    <div id="puzzle-list">
-        Select a difficulty and language to view puzzles.
-    </div>
-</div>
-
-<script>
+    <script>
     const difficultyButtons = document.querySelectorAll('.difficulty-btns .btn');
     const languageContainers = document.querySelectorAll('.language-btns');
     const puzzleList = document.getElementById('puzzle-list');
+    const successMessage = document.getElementById('success-message');
 
     let currentDifficulty = null;
     let currentLanguage = null;
+
+    function showSuccessMessage(message) {
+        successMessage.textContent = message;
+        successMessage.style.display = 'block';
+        setTimeout(() => {
+            successMessage.style.display = 'none';
+        }, 3000);
+    }
 
     function clearActiveButtons(container) {
         container.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
     }
 
+    function loadPuzzles(difficulty, language) {
+        fetch(`?get_puzzles=1&difficulty=${difficulty}&language=${language}`)
+            .then(response => response.text())
+            .then(data => {
+                puzzleList.innerHTML = `
+                    <h2>${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)} ${language.charAt(0).toUpperCase() + language.slice(1)} Puzzles</h2>
+                    <textarea id="full-puzzle-text" spellcheck="false">${data}</textarea>
+                    <button id="save-full-puzzle">Save Changes</button>
+                `;
+
+                const saveButton = document.getElementById('save-full-puzzle');
+                saveButton.addEventListener('click', () => {
+                    const content = document.getElementById('full-puzzle-text').value;
+                    
+                    fetch('', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            action: 'update_full_puzzle',
+                            difficulty: currentDifficulty,
+                            language: currentLanguage,
+                            content: content
+                        })
+                    })
+                    .then(response => response.text())
+                    .then(result => {
+                        showSuccessMessage(result);
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showSuccessMessage('Error saving puzzles. Please try again.');
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                puzzleList.innerHTML = '<p class="error">Error loading puzzles. Please try again.</p>';
+            });
+    }
+
     difficultyButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            difficultyButtons.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            languageContainers.forEach(div => div.classList.remove('active'));
-            currentDifficulty = btn.getAttribute('data-difficulty');
-            currentLanguage = null;
-
-            const langDiv = document.getElementById(currentDifficulty + '-langs');
-            if (langDiv) langDiv.classList.add('active');
-
-            puzzleList.innerHTML = 'Select a language to view puzzles.';
-        });
-    });
-
-    languageContainers.forEach(container => {
-        container.querySelectorAll('button').forEach(langBtn => {
-            langBtn.addEventListener('click', () => {
-                if (!currentDifficulty) {
-                    puzzleList.innerHTML = 'Please select a difficulty first.';
-                    return;
-                }
-
-                const language = langBtn.getAttribute('data-language');
-
-                if (currentLanguage === language) {
+            const difficulty = btn.dataset.difficulty;
+            
+            // If clicking the same difficulty button again
+            if (currentDifficulty === difficulty) {
+                // Toggle language section
+                const languageSection = document.getElementById('language-section');
+                if (languageSection.style.display === 'block') {
+                    languageSection.style.display = 'none';
+                    btn.classList.remove('active');
+                    currentDifficulty = null;
                     currentLanguage = null;
-                    clearActiveButtons(container);
-                    puzzleList.innerHTML = 'Select a language to view puzzles.';
-                    return;
+                } else {
+                    languageSection.style.display = 'block';
+                    btn.classList.add('active');
+                    currentDifficulty = difficulty;
                 }
+            } else {
+                // Clicking a different difficulty button
+                difficultyButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const languageSection = document.getElementById('language-section');
+                languageSection.style.display = 'block';
+                
+                languageContainers.forEach(container => {
+                    container.classList.remove('active');
+                });
+                
+                const relevantLanguages = document.getElementById(`${difficulty}-langs`);
+                if (relevantLanguages) {
+                    relevantLanguages.classList.add('active');
+                }
+                
+                currentDifficulty = difficulty;
+                currentLanguage = null;
+            }
 
-                currentLanguage = language;
-                clearActiveButtons(container);
-                langBtn.classList.add('active');
-
-                fetch(`?get_puzzles=1&difficulty=${currentDifficulty}&language=${language}`)
-                    .then(response => response.text())
-                    .then(data => {
-                        puzzleList.innerHTML = `
-                            <textarea id="full-puzzle-text">${data}</textarea>
-                            <button id="save-full-puzzle">Save Changes</button>
-                        `;
-
-                        document.getElementById('save-full-puzzle').addEventListener('click', () => {
-                            const content = document.getElementById('full-puzzle-text').value;
-
-                            fetch('adminpuzz.php', {
-                                method: 'POST',
-                                headers: {'Content-Type': 'application/json'},
-                                body: JSON.stringify({
-                                    action: 'update_full_puzzle',
-                                    difficulty: currentDifficulty,
-                                    language: currentLanguage,
-                                    content: content
-                                })
-                            })
-                            .then(res => res.text())
-                            .then(msg => alert(msg))
-                            .catch(() => alert('Failed to save changes.'));
-                        });
-                    })
-                    .catch(() => {
-                        puzzleList.innerHTML = 'Failed to load puzzles.';
-                    });
-            });
+            // Reset puzzle list
+            puzzleList.innerHTML = '<p>Select a language to view puzzles.</p>';
         });
     });
-</script>
+
+    document.querySelectorAll('.language-btns .lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (!currentDifficulty) {
+                showSuccessMessage('Please select a difficulty level first.');
+                return;
+            }
+
+            const language = btn.dataset.language;
+            
+            // If clicking the same language button again
+            if (currentLanguage === language) {
+                btn.classList.remove('active');
+                currentLanguage = null;
+                puzzleList.innerHTML = '<p>Select a language to view puzzles.</p>';
+            } else {
+                // Clicking a different language button
+                const languageButtons = btn.parentElement.querySelectorAll('.lang-btn');
+                languageButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                currentLanguage = language;
+                loadPuzzles(currentDifficulty, currentLanguage);
+            }
+        });
+    });
+    </script>
 </body>
 </html>
